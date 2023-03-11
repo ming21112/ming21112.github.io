@@ -42,6 +42,31 @@
     
     
     <entry>
+      <title>two</title>
+      <link href="/2023/03/09/%E7%AC%AC%E4%BA%8C%E7%AF%87%E6%96%87%E7%AB%A0/"/>
+      <url>/2023/03/09/%E7%AC%AC%E4%BA%8C%E7%AF%87%E6%96%87%E7%AB%A0/</url>
+      
+        <content type="html"><![CDATA[<p>456</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> java </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> two </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>one</title>
       <link href="/2023/03/09/%E7%AC%AC%E4%B8%89%E7%AF%87%E6%96%87%E7%AB%A0/"/>
       <url>/2023/03/09/%E7%AC%AC%E4%B8%89%E7%AF%87%E6%96%87%E7%AB%A0/</url>
@@ -67,23 +92,23 @@
     
     
     <entry>
-      <title>two</title>
-      <link href="/2023/03/09/%E7%AC%AC%E4%BA%8C%E7%AF%87%E6%96%87%E7%AB%A0/"/>
-      <url>/2023/03/09/%E7%AC%AC%E4%BA%8C%E7%AF%87%E6%96%87%E7%AB%A0/</url>
+      <title>sql注入（一）</title>
+      <link href="/2023/03/02/sql1/"/>
+      <url>/2023/03/02/sql1/</url>
       
-        <content type="html"><![CDATA[<p>456</p>]]></content>
+        <content type="html"><![CDATA[<h3 id="时间盲注"><a href="#时间盲注" class="headerlink" title="时间盲注"></a>时间盲注</h3><p>通过注入特定语句，根据页面的相应时间的延长情况，来判断是否注入成功。</p><p>一般在sql注入中使用sleep()函数看加载页面的<strong>时间变化</strong>（延长页面响应时间）来判断是否存在注入</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sql</span>语句原型：<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> admin <span class="keyword">where</span> id<span class="operator">=</span><span class="string">&#x27;用户输入内容&#x27;</span>;</span><br><span class="line">时间盲注语句: <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> admin <span class="keyword">where</span> id<span class="operator">=</span><span class="string">&#x27;111&#x27;</span> <span class="keyword">and</span> sleep(<span class="number">3</span>)<span class="comment">-- </span></span><br><span class="line"><span class="comment">-- 当页面响应延时3秒，且页面回显正常，说明存在注入</span></span><br></pre></td></tr></table></figure><p><strong>适用场景：</strong>页面无回显（无法使用报错、联合查询注入），无法通过页面回显判断注入语句是否执行。</p><h3 id="布尔盲注"><a href="#布尔盲注" class="headerlink" title="布尔盲注"></a>布尔盲注</h3><p>通过注入特定逻辑条件语句，根据页面的变化情况，来判断是否注入成功。</p><p>在sql注入中经常使用if，case函数进行注入，然后观察响应页面变化（延长页面响应时间或者页面异常响应）来判断是否存在注入</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sql</span>语句原型：<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> admin <span class="keyword">where</span> id<span class="operator">=</span>用户输入内容;</span><br><span class="line">布尔盲注语句: <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> admin <span class="keyword">where</span> id<span class="operator">=</span><span class="number">111</span> <span class="keyword">and</span> length(database())<span class="operator">&gt;</span><span class="number">5</span> <span class="comment">-- </span></span><br><span class="line"><span class="comment">-- 当页面正常响应，即可证明数据库长度大于5</span></span><br></pre></td></tr></table></figure><p><strong>适用场景</strong>：页面无回显（无法使用报错、联合查询注入），无法通过页面回显判断注入语句是否执行。</p><h3 id="堆叠注入"><a href="#堆叠注入" class="headerlink" title="堆叠注入"></a>堆叠注入</h3><p>英文分号;表示一个SQL语句的结尾，攻击者可以通过;结束一个原有SQL语句之后构造下一条SQL注入语句，最终使得两者（前后SQL语句）按顺序执行【本质是多条SQL语句执行】</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">例: <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> sale <span class="keyword">where</span> id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> length(database())<span class="operator">&gt;</span><span class="number">5</span>;<span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>;</span><br></pre></td></tr></table></figure><p><strong>注意：Oracle不能使用堆叠注入，Mysql、Mssql可以使用堆叠注入</strong></p><p>堆叠注入可以是任意类型SQL语句（增删改查、不受SQL语句影响），联合查询注入只能执行查询语句（受原SQL语句影响）</p><p>宽字节注入</p><p>PHP addslashes函数：addslashes函数会在指定的预定义字符前添加反斜杠转义，这些预定义的字符是：单引号（’）、双引号（”）、反斜杠（\) 、 NULL</p><p><img src="https://raw.githubusercontent.com/ming21112/blog-img/main/bj/sql-1.png" alt=""></p><p>GB2312、GBK、GB18030、GIG5、Shift_JIS为常说的宽字节，因为在实际应用中会使用两个字节（一个GBK编码汉字，占用两个字节）</p><p>产生原因：MYSQL在处理GBK编码的时候认为两个字符为一个汉字，配合转义函数或者参数的作用下逃逸出单引号，使得sql注入语句得以正常执行。</p><p>注意：%27——单引号，%20——空格，%23——#号，%5c——/反斜杠</p><p><img src="https://raw.githubusercontent.com/ming21112/blog-img/main/bj/sql-2.png" alt=""></p><h2 id="二次注入"><a href="#二次注入" class="headerlink" title="二次注入"></a>二次注入</h2><p>二次注入是指已存储（数据库、文件）的用户被读取后再次进入到SQL查询语句中导致的注入，反向证明来自数据库的数据也不可信。</p><p>二次注入利用难度  &gt;   常规注入</p><p>注：mysql_real_escape_string()函数转义SQL语句中使用的字符串中的特殊字符。包括\x00、\n、\r、\、’、“、\x1a</p><p><img src="https://raw.githubusercontent.com/ming21112/blog-img/main/bj/sql-3.png" alt="sql-3"></p>]]></content>
       
       
       <categories>
           
-          <category> java </category>
+          <category> 漏洞挖掘 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> two </tag>
+            <tag> 漏洞挖掘 </tag>
             
         </tags>
       
