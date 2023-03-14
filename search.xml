@@ -4,6 +4,81 @@
   
     
     <entry>
+      <title>XSS</title>
+      <link href="/2023/03/12/XSS/"/>
+      <url>/2023/03/12/XSS/</url>
+      
+        <content type="html"><![CDATA[<h3 id="XSS"><a href="#XSS" class="headerlink" title="XSS"></a>XSS</h3><p>XSS全称（Cross Site Scripting）跨站脚本攻击，是Web程序中最常见的漏洞。指攻击者在网页中嵌入客户端脚本（例如JavaScript），当用户浏览此网页时，脚本就会在用户的流量器上执行，从而达到攻击者的目的，比如获取用户的Cookie，导航到恶意网站，携带木马等</p><h3 id="XSS危害"><a href="#XSS危害" class="headerlink" title="XSS危害"></a>XSS危害</h3><p>1、挖矿——在你访问存在XSS漏洞的页面的时候利用你的电脑进行网页挖矿</p><p>2、内网渗透——如果访问者位于内网环境，那么可以利用被攻击者的浏览器探测内网，端口扫描做渗透内网的相关信息收集</p><p>3、调用摄像头——利用网页或者浏览器的特性，可以通过XSS漏洞打开并观看摄像头等</p><p>4、组合应用——结合浏览器、路由器等漏洞，攻击电脑、路由器等</p><h3 id="XSS类型"><a href="#XSS类型" class="headerlink" title="XSS类型"></a>XSS类型</h3><h4 id="反射型XSS"><a href="#反射型XSS" class="headerlink" title="反射型XSS"></a>反射型XSS</h4><p>反射XSS是当不可信任的用户输入被<strong>服务器</strong>在没有任何验证下处理并没有编码或转义的情况下直接回显在页面，导致代码在浏览器执行的一种XSS漏洞</p><p>特点：<strong>经过服务端</strong>、一般情况下恶意代码裸露在请求信息中。危害&lt;持久型</p><h4 id="DOM-XSS"><a href="#DOM-XSS" class="headerlink" title="DOM XSS"></a>DOM XSS</h4><p>在DOM解析过程中触发的跨站脚本，与反射型XSS的区别在于DOM型XSS请求不经过浏览器</p><p>特点：<strong>不经过服务端，前端JS处理。</strong>一般情况下恶意代码裸露在请求信息中。危害&lt;持久型，挖掘难度&gt;反射型</p><h4 id="存储型XSS"><a href="#存储型XSS" class="headerlink" title="存储型XSS"></a>存储型XSS</h4><p>持久型跨站脚本是当不可信的用户输入被<strong>服务器</strong>在没有任何验证下处理并没有在编码或转义的情况下直接存储在数据库中，业务调用存储在数据库的用户输入，导致代码在浏览器执行的一种XSS漏洞</p><p>特点：经过服务端和数据库。危害&gt;非持久型</p><p>XSS漏洞扫描工具：<a href="http://github.com/s0md3v/XSStrike">http://github.com/s0md3v/XSStrike</a> 、 <a href="https://github.com/IwzSoviet/NoXSS(批量">https://github.com/IwzSoviet/NoXSS(批量</a>)</p><h3 id="XSS持久型与非持久型的区别"><a href="#XSS持久型与非持久型的区别" class="headerlink" title="XSS持久型与非持久型的区别"></a>XSS持久型与非持久型的区别</h3><div class="table-container"><table><thead><tr><th style="text-align:center">XSS类型</th><th style="text-align:center">持久型</th><th style="text-align:center">非持久型</th></tr></thead><tbody><tr><td style="text-align:center">Payload存放位置</td><td style="text-align:center">数据库</td><td style="text-align:center">请求信息</td></tr><tr><td style="text-align:center">触发次数</td><td style="text-align:center">可重复触发</td><td style="text-align:center">仅触发一次</td></tr><tr><td style="text-align:center">触发对象</td><td style="text-align:center">网站任意用户</td><td style="text-align:center">特定用户</td></tr><tr><td style="text-align:center">触发方式</td><td style="text-align:center">被动触发（用户无法左右）</td><td style="text-align:center">主动触发（用户不点击一般没事）</td></tr></tbody></table></div><h3 id="XSS挖掘流程"><a href="#XSS挖掘流程" class="headerlink" title="XSS挖掘流程"></a>XSS挖掘流程</h3><p><img src="https://raw.githubusercontent.com/ming21112/blog-img/main/bj/xss-1.png" alt=""></p><h3 id="反射型和存储型XSS输出位置"><a href="#反射型和存储型XSS输出位置" class="headerlink" title="反射型和存储型XSS输出位置"></a>反射型和存储型XSS输出位置</h3><p>第一种：HTML标签之间（闭合标签，直接内嵌）</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">例如：<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;test&quot;</span>&gt;</span>XSS playload<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure><p>第二种：HTML属性之内（1、闭合value，借助事件触发  2、闭合标签，另起新标签）</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">例如：<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">value</span>=<span class="string">&quot;xss payload&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure><p>第三种：Javascript标签之内（直接插入payload）</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">例如：<span class="tag">&lt;<span class="name">sctipt</span> <span class="attr">type</span>=<span class="string">&quot;text/javasctipt&quot;</span>&gt;</span>sxx payload<span class="tag">&lt;/<span class="name">sctipt</span>&gt;</span> </span><br></pre></td></tr></table></figure><p>第四种：CSS标签之内（闭合标签）</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">例如：<span class="tag">&lt;<span class="name">style</span> <span class="attr">type</span>=<span class="string">&quot;text/css&quot;</span>&gt;</span><span class="language-css"><span class="selector-tag">body</span>&#123;xss payload&#125;</span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br></pre></td></tr></table></figure><h3 id="XSS常出现位置"><a href="#XSS常出现位置" class="headerlink" title="XSS常出现位置"></a>XSS常出现位置</h3><p>1、文件上传XSS，很多网站的资料修改就是把头像上传然后以超链接形式保存在数据库，那么可以修改超链接就可以进行存储XSS。</p><p>2、文件下载XSS，网站提供应用下载，如果下载链接和版本信息只要输出在url尝试修改XSS。</p><p>3、第三方调用URLXSS，一些网站注册会调用js或其他脚本，那么修改get/post调用的参数尝试XSS。</p><p>4、用户名输出XSS，比如网站功能输入用户名会弹出让你确认那么可以尝试XSS。</p><p>5、无障碍XSS，政府，银行网站存在一些无障碍模式，那么只要在页面找个输入框输入payload就会在识别的时候触发。</p><p>6、文件预览XSS</p><p><strong>PS：能输入/输出，能存储，都可以去尝试</strong></p><h3 id="XSS备忘录"><a href="#XSS备忘录" class="headerlink" title="XSS备忘录"></a>XSS备忘录</h3><p><a href="https://portswigger.net/web-security/cross-site-scripting/cheat-sheet">Cross-Site Scripting (XSS) Cheat Sheet - 2023 Edition | Web Security Academy (portswigger.net)</a></p><h3 id="XSS复制工具"><a href="#XSS复制工具" class="headerlink" title="XSS复制工具"></a>XSS复制工具</h3><p>XSS’OR，余弦开发，常用其中加解密与代码生成</p><p>XSSEE 3.0 Beat ，Minyer开发的，加解密最好用神器</p><p>Online JavaScript beautifier ，js美化工具，分析js常用</p><p>xss在线编码：<a href="http://evilcos.me/lab/xssor/">http://evilcos.me/lab/xssor/</a></p><p>检测你的浏览器支持那些XSS构造特性：<a href="http://www.iv2-technologies.com/xss-tester.html#">http://www.iv2-technologies.com/xss-tester.html#</a></p><p>在线生成XSS：<a href="http://brutelogic.com.br/webgun">http://brutelogic.com.br/webgun</a></p><h3 id="XSS防御"><a href="#XSS防御" class="headerlink" title="XSS防御"></a>XSS防御</h3><p>1、用户输入检查，检查用户输入内容是否符合白名单</p><p>2、对输入内容进行HTML实体编码或者转义【如HTML编码、CSS编码、JavaScript编码等】</p><p>3、对cookie中关键参数设置HttpOnly</p><p>4、部署WAF</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 漏洞挖掘 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 漏洞挖掘 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>sql注入防御</title>
+      <link href="/2023/03/12/sql3/"/>
+      <url>/2023/03/12/sql3/</url>
+      
+        <content type="html"><![CDATA[<h3 id="SQL注入产生原因"><a href="#SQL注入产生原因" class="headerlink" title="SQL注入产生原因"></a>SQL注入产生原因</h3><p><img src="https://raw.githubusercontent.com/ming21112/blog-img/main/bj/sqlf1.jpg" alt=""></p><h3 id="SQL注入防御【PHP】"><a href="#SQL注入防御【PHP】" class="headerlink" title="SQL注入防御【PHP】"></a>SQL注入防御【PHP】</h3><p>1、关闭错误提示</p><p>​            PHP：设置配置文件php.ini中的display_errors=Off</p><p>2、使用单引号保护模式，且编码不为GBK</p><p>3、对注入适用的特殊符号进行转义（黑名单）</p><p>​            PHP：使用addslashes函数对输入内容进行转义</p><p>​            MYSQL：使用mysql_real_escape_string函数对输入内容进行转义</p><h3 id="预编译与参数可视化"><a href="#预编译与参数可视化" class="headerlink" title="预编译与参数可视化"></a>预编译与参数可视化</h3><p>Java代码：    </p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">sql</span> <span class="operator">=</span> <span class="string">&quot;select user_id,user_name,credits from t_user where credits &gt; ?&quot;</span>;</span><br><span class="line">st = conn.prepareStatement(sql); <span class="comment">//这里使用prepareStatement</span></span><br><span class="line">st.setInt(<span class="number">1</span>,<span class="number">8</span>);  <span class="comment">//向数据库发送SQL命令</span></span><br><span class="line">rs = st.executeQuery();</span><br></pre></td></tr></table></figure><p>预编译：提前编译SQL语句，确定SQL语句词法、语义解析、优化SQL语句。预编译语句就是将这类语句中的值用占位符替代，可以视为将sql语句模板或者说参数化。一次编译、多次运行，省去了解析优化等过程。这样可高效率，且可防止SQL注入。</p><p>本质上直接拼接SQL语句执行，会把输入的内容当成SQL关键词执行，而预编译过后，仅作为参数</p><h3 id="在线短信接收网站"><a href="#在线短信接收网站" class="headerlink" title="在线短信接收网站"></a>在线短信接收网站</h3><p>​    <a href="https://www.pdflibr.com">https://www.pdflibr.com</a></p><p>​    <a href="http://www.z-sms.com">http://www.z-sms.com</a></p><p>​    <a href="https://www.becmd.com">https://www.becmd.com</a></p><p>​    <a href="https://yunduanxin.net">https://yunduanxin.net</a></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 漏洞挖掘 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 漏洞挖掘 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>sql注入（二）</title>
+      <link href="/2023/03/11/sql2/"/>
+      <url>/2023/03/11/sql2/</url>
+      
+        <content type="html"><![CDATA[<h3 id="带外攻击"><a href="#带外攻击" class="headerlink" title="带外攻击"></a>带外攻击</h3><p>带外（Out-of-band）攻击：带外（OOB）技术为攻击者提供了另一种信道（方式）确认和利用无回显的OOB技术通常需要易受攻击的实体（目标）能生成出战TCP/UDP/ICMP请求（建立信道），然后攻击者通过请求提取数据。一般载体为DNS请求或HTTP请求</p><h3 id="带外攻击和带内攻击"><a href="#带外攻击和带内攻击" class="headerlink" title="带外攻击和带内攻击"></a>带外攻击和带内攻击</h3><div class="table-container"><table><thead><tr><th>攻击类型</th><th>注入类型</th><th>说明</th></tr></thead><tbody><tr><td>In-band</td><td>联合查询（显）、报错注入、布尔盲注、时间注入</td><td>在同一信道内通过应用的返回或者报错提取数据，或者通过非直接数据反馈提取数据</td></tr><tr><td>Out-of-band</td><td>OOB注入</td><td>通过其他信道获取数据</td></tr></tbody></table></div><h3 id="Dnslog攻击（OOB）"><a href="#Dnslog攻击（OOB）" class="headerlink" title="Dnslog攻击（OOB）"></a>Dnslog攻击（OOB）</h3><p>以DNS记录为介质的攻击成为DNSlog攻击</p><p>DNSlog网站：<a href="http://dnslog.cn">http://dnslog.cn</a></p><h3 id="配置Dnslog注入环境"><a href="#配置Dnslog注入环境" class="headerlink" title="配置Dnslog注入环境"></a>配置Dnslog注入环境</h3><p>SQL-Labs是一个学习SQL注入的靶场。</p><p>第一步：设置php.ini中的magic_quotes_gpc为Off</p><p>第二步：把SQLi-labs源码上传到网站根目录，修改/sql-connections/db-creds.ini中的数据库账号密码</p><p>第三步：访问首页点击Setup/reset Database for labs，初始化数据之后即完成安装</p><p><img src="https://raw.githubusercontent.com/ming21112/blog-img/main/bj/dns-log1.png" alt=""></p><p><img src="https://raw.githubusercontent.com/ming21112/blog-img/main/bj/dns-log2.png" alt=""></p><h3 id="Mysql-secure-file-priv-特性"><a href="#Mysql-secure-file-priv-特性" class="headerlink" title="Mysql  secure_file_priv 特性"></a>Mysql  secure_file_priv 特性</h3><p>查看变量命令：show variables like ‘%secure%’;</p><p>1、当secure_file_priv为空，可读取磁盘的所有目录。</p><p>2、当secure_file_priv为C:\，就可以读取C盘的文件。</p><p>3、当secure_file_priv为null，load_file就不能读写文件。</p><p>如果需要更改必须通过设置windows的my.ini 、Linux的/etc/my.conf来配置的模式，例如secure_file_priv=””表示可以读取任意磁盘的文件</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 漏洞挖掘 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 漏洞挖掘 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Hello World</title>
       <link href="/2023/03/10/hello-world/"/>
       <url>/2023/03/10/hello-world/</url>
@@ -20,6 +95,31 @@
       <title>one</title>
       <link href="/2023/03/09/%E7%AC%AC%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0/"/>
       <url>/2023/03/09/%E7%AC%AC%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0/</url>
+      
+        <content type="html"><![CDATA[<p>123</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> c </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> one </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>one</title>
+      <link href="/2023/03/09/%E7%AC%AC%E4%B8%89%E7%AF%87%E6%96%87%E7%AB%A0/"/>
+      <url>/2023/03/09/%E7%AC%AC%E4%B8%89%E7%AF%87%E6%96%87%E7%AB%A0/</url>
       
         <content type="html"><![CDATA[<p>123</p>]]></content>
       
@@ -67,36 +167,11 @@
     
     
     <entry>
-      <title>one</title>
-      <link href="/2023/03/09/%E7%AC%AC%E4%B8%89%E7%AF%87%E6%96%87%E7%AB%A0/"/>
-      <url>/2023/03/09/%E7%AC%AC%E4%B8%89%E7%AF%87%E6%96%87%E7%AB%A0/</url>
-      
-        <content type="html"><![CDATA[<p>123</p>]]></content>
-      
-      
-      <categories>
-          
-          <category> c </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> one </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>sql注入（一）</title>
       <link href="/2023/03/02/sql1/"/>
       <url>/2023/03/02/sql1/</url>
       
-        <content type="html"><![CDATA[<h3 id="时间盲注"><a href="#时间盲注" class="headerlink" title="时间盲注"></a>时间盲注</h3><p>通过注入特定语句，根据页面的相应时间的延长情况，来判断是否注入成功。</p><p>一般在sql注入中使用sleep()函数看加载页面的<strong>时间变化</strong>（延长页面响应时间）来判断是否存在注入</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sql</span>语句原型：<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> admin <span class="keyword">where</span> id<span class="operator">=</span><span class="string">&#x27;用户输入内容&#x27;</span>;</span><br><span class="line">时间盲注语句: <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> admin <span class="keyword">where</span> id<span class="operator">=</span><span class="string">&#x27;111&#x27;</span> <span class="keyword">and</span> sleep(<span class="number">3</span>)<span class="comment">-- </span></span><br><span class="line"><span class="comment">-- 当页面响应延时3秒，且页面回显正常，说明存在注入</span></span><br></pre></td></tr></table></figure><p><strong>适用场景：</strong>页面无回显（无法使用报错、联合查询注入），无法通过页面回显判断注入语句是否执行。</p><h3 id="布尔盲注"><a href="#布尔盲注" class="headerlink" title="布尔盲注"></a>布尔盲注</h3><p>通过注入特定逻辑条件语句，根据页面的变化情况，来判断是否注入成功。</p><p>在sql注入中经常使用if，case函数进行注入，然后观察响应页面变化（延长页面响应时间或者页面异常响应）来判断是否存在注入</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sql</span>语句原型：<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> admin <span class="keyword">where</span> id<span class="operator">=</span>用户输入内容;</span><br><span class="line">布尔盲注语句: <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> admin <span class="keyword">where</span> id<span class="operator">=</span><span class="number">111</span> <span class="keyword">and</span> length(database())<span class="operator">&gt;</span><span class="number">5</span> <span class="comment">-- </span></span><br><span class="line"><span class="comment">-- 当页面正常响应，即可证明数据库长度大于5</span></span><br></pre></td></tr></table></figure><p><strong>适用场景</strong>：页面无回显（无法使用报错、联合查询注入），无法通过页面回显判断注入语句是否执行。</p><h3 id="堆叠注入"><a href="#堆叠注入" class="headerlink" title="堆叠注入"></a>堆叠注入</h3><p>英文分号;表示一个SQL语句的结尾，攻击者可以通过;结束一个原有SQL语句之后构造下一条SQL注入语句，最终使得两者（前后SQL语句）按顺序执行【本质是多条SQL语句执行】</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">例: <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> sale <span class="keyword">where</span> id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> length(database())<span class="operator">&gt;</span><span class="number">5</span>;<span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>;</span><br></pre></td></tr></table></figure><p><strong>注意：Oracle不能使用堆叠注入，Mysql、Mssql可以使用堆叠注入</strong></p><p>堆叠注入可以是任意类型SQL语句（增删改查、不受SQL语句影响），联合查询注入只能执行查询语句（受原SQL语句影响）</p><p>宽字节注入</p><p>PHP addslashes函数：addslashes函数会在指定的预定义字符前添加反斜杠转义，这些预定义的字符是：单引号（’）、双引号（”）、反斜杠（\) 、 NULL</p><p><img src="https://raw.githubusercontent.com/ming21112/blog-img/main/bj/sql-1.png" alt=""></p><p>GB2312、GBK、GB18030、GIG5、Shift_JIS为常说的宽字节，因为在实际应用中会使用两个字节（一个GBK编码汉字，占用两个字节）</p><p>产生原因：MYSQL在处理GBK编码的时候认为两个字符为一个汉字，配合转义函数或者参数的作用下逃逸出单引号，使得sql注入语句得以正常执行。</p><p>注意：%27——单引号，%20——空格，%23——#号，%5c——/反斜杠</p><p><img src="https://raw.githubusercontent.com/ming21112/blog-img/main/bj/sql-2.png" alt=""></p><h2 id="二次注入"><a href="#二次注入" class="headerlink" title="二次注入"></a>二次注入</h2><p>二次注入是指已存储（数据库、文件）的用户被读取后再次进入到SQL查询语句中导致的注入，反向证明来自数据库的数据也不可信。</p><p>二次注入利用难度  &gt;   常规注入</p><p>注：mysql_real_escape_string()函数转义SQL语句中使用的字符串中的特殊字符。包括\x00、\n、\r、\、’、“、\x1a</p><p><img src="https://raw.githubusercontent.com/ming21112/blog-img/main/bj/sql-3.png" alt="sql-3"></p>]]></content>
+        <content type="html"><![CDATA[<h3 id="时间盲注"><a href="#时间盲注" class="headerlink" title="时间盲注"></a>时间盲注</h3><p>通过注入特定语句，根据页面的相应时间的延长情况，来判断是否注入成功。</p><p>一般在sql注入中使用sleep()函数看加载页面的<strong>时间变化</strong>（延长页面响应时间）来判断是否存在注入</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sql</span>语句原型：<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> admin <span class="keyword">where</span> id<span class="operator">=</span><span class="string">&#x27;用户输入内容&#x27;</span>;</span><br><span class="line">时间盲注语句: <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> admin <span class="keyword">where</span> id<span class="operator">=</span><span class="string">&#x27;111&#x27;</span> <span class="keyword">and</span> sleep(<span class="number">3</span>)<span class="comment">-- </span></span><br><span class="line"><span class="comment">-- 当页面响应延时3秒，且页面回显正常，说明存在注入</span></span><br></pre></td></tr></table></figure><p><strong>适用场景：</strong>页面无回显（无法使用报错、联合查询注入），无法通过页面回显判断注入语句是否执行。</p><h3 id="布尔盲注"><a href="#布尔盲注" class="headerlink" title="布尔盲注"></a>布尔盲注</h3><p>通过注入特定逻辑条件语句，根据页面的变化情况，来判断是否注入成功。</p><p>在sql注入中经常使用if，case函数进行注入，然后观察响应页面变化（延长页面响应时间或者页面异常响应）来判断是否存在注入</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sql</span>语句原型：<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> admin <span class="keyword">where</span> id<span class="operator">=</span>用户输入内容;</span><br><span class="line">布尔盲注语句: <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> admin <span class="keyword">where</span> id<span class="operator">=</span><span class="number">111</span> <span class="keyword">and</span> length(database())<span class="operator">&gt;</span><span class="number">5</span> <span class="comment">-- </span></span><br><span class="line"><span class="comment">-- 当页面正常响应，即可证明数据库长度大于5</span></span><br></pre></td></tr></table></figure><p><strong>适用场景</strong>：页面无回显（无法使用报错、联合查询注入），无法通过页面回显判断注入语句是否执行。</p><h3 id="堆叠注入"><a href="#堆叠注入" class="headerlink" title="堆叠注入"></a>堆叠注入</h3><p>英文分号;表示一个SQL语句的结尾，攻击者可以通过;结束一个原有SQL语句之后构造下一条SQL注入语句，最终使得两者（前后SQL语句）按顺序执行【本质是多条SQL语句执行】</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">例: <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> sale <span class="keyword">where</span> id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> length(database())<span class="operator">&gt;</span><span class="number">5</span>;<span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>;</span><br></pre></td></tr></table></figure><p><strong>注意：Oracle不能使用堆叠注入，Mysql、Mssql可以使用堆叠注入</strong></p><p>堆叠注入可以是任意类型SQL语句（增删改查、不受SQL语句影响），联合查询注入只能执行查询语句（受原SQL语句影响）</p><h2 id="宽字节注入"><a href="#宽字节注入" class="headerlink" title="宽字节注入"></a>宽字节注入</h2><p>PHP addslashes函数：addslashes函数会在指定的预定义字符前添加反斜杠转义，这些预定义的字符是：单引号（’）、双引号（”）、反斜杠（\) 、 NULL</p><p><img src="https://raw.githubusercontent.com/ming21112/blog-img/main/bj/sql-1.png" alt=""></p><p>GB2312、GBK、GB18030、GIG5、Shift_JIS为常说的宽字节，因为在实际应用中会使用两个字节（一个GBK编码汉字，占用两个字节）</p><p>产生原因：MYSQL在处理GBK编码的时候认为两个字符为一个汉字，配合转义函数或者参数的作用下逃逸出单引号，使得sql注入语句得以正常执行。</p><p>注意：%27——单引号，%20——空格，%23——#号，%5c——/反斜杠</p><p><img src="https://raw.githubusercontent.com/ming21112/blog-img/main/bj/sql-2.png" alt=""></p><h2 id="二次注入"><a href="#二次注入" class="headerlink" title="二次注入"></a>二次注入</h2><p>二次注入是指已存储（数据库、文件）的用户被读取后再次进入到SQL查询语句中导致的注入，反向证明来自数据库的数据也不可信。</p><p>二次注入利用难度  &gt;   常规注入</p><p>注：mysql_real_escape_string()函数转义SQL语句中使用的字符串中的特殊字符。包括\x00、\n、\r、\、’、“、\x1a</p><p><img src="https://raw.githubusercontent.com/ming21112/blog-img/main/bj/sql-3.png" alt="sql-3"></p>]]></content>
       
       
       <categories>
